@@ -1,0 +1,44 @@
+# Forgejo integration: one entry per Forgejo server (private git forge). Read only: it never changes
+# Forgejo (Hisho itself upgrades the Forgejo on Core's machine; this shows how that goes). Shows up/down, the running version and whether a newer release of the same line is out
+# (security releases flagged), the containers when Forgejo runs on Core's machine, the nightly backups
+# (present, recent, not empty) and their off-machine copy, and with a read-only token the runners,
+# repositories, pull mirrors that stopped syncing and the latest CI run of watched repositories.
+# Token scopes: read:repository and read:organization (Forgejo > Settings > Applications), by name:
+#   hisho addon entry forgejo main url=https://git.example.ts.net token=FORGEJO_READONLY_TOKEN org=myorg
+name: forgejo
+kind: integration
+title: Forgejo
+description: Your Forgejo git server's health, version and updates, backups, mirrors, runners and CI.
+version: 0.2.2
+you_need:
+  - "A Forgejo git server (Hisho can run one on the Core machine)"
+  - "Optional: a read-only Forgejo token, to see runners and private mirrors"
+provider: provider.py
+# Install in Hisho: Forgejo itself, when there is none (Hisho's install, pinned versions, upgraded by Hisho)
+companion:
+  title: Forgejo
+  install: companion/install.sh
+  data_dir: ~/.local/share/hisho/forgejo
+  ports: {http: 3000, ssh: 2222}
+  health: {http: "http://127.0.0.1:3000/api/healthz", expect: 200, timeout: 300}
+  detect: {containers: [forgejo], http: ["http://127.0.0.1:3000/api/healthz"], entry: url}
+  entry: {url: "https://{core_dns}:3443", container: forgejo, backups: ~/backups/forgejo}
+  requires: [docker, tailscale]
+entry_label: Forgejo server
+secret_rotate: Forgejo > Settings > Applications (read:repository and read:organization only)
+entry_schema:
+  url: url                 # Forgejo's web address (as in its ROOT_URL)
+  token: "secret?"         # a read-only token's secret NAME; without one: health, version, containers, backups
+  org: "str?"              # organization whose runners and repositories to show
+  watch: "str?"            # repositories (owner/name, comma-separated) whose latest CI run to show
+  container: "str?"        # Forgejo's docker container, when it runs on Core's machine (e.g. forgejo)
+  backups: "str?"          # folder of its nightly backups on Core's machine (e.g. ~/backups/forgejo)
+  note: "str?"
+entry_form:
+  url: "Web address (https://...)"
+  token: "Read-only token (its secret's name)"
+  org: "Organization (runners, mirrors)"
+  watch: "CI of repositories (owner/name, comma-separated)"
+  container: "Docker container on Core's machine (e.g. forgejo)"
+  backups: "Backups folder on Core's machine (e.g. ~/backups/forgejo)"
+  note: "Note"
