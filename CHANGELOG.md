@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3
+
+- Every field on its setup form says in plain words what it is, and links to where to get it (addon.yaml `help:`, shown by Hisho's dashboard).
+
 ## 0.2.2
 
 - Install in Hisho: with no Forgejo yet, its page installs one on the Core machine (Hisho's own install: Docker, PostgreSQL, tailnet port 3443) and fills in the entry; never over an existing Forgejo.

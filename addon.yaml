@@ -9,7 +9,7 @@ name: forgejo
 kind: integration
 title: Forgejo
 description: Your Forgejo git server's health, version and updates, backups, mirrors, runners and CI.
-version: 0.2.2
+version: 0.2.3
 you_need:
   - "A Forgejo git server (Hisho can run one on the Core machine)"
   - "Optional: a read-only Forgejo token, to see runners and private mirrors"
@@ -42,3 +42,28 @@ entry_form:
   container: "Docker container on Core's machine (e.g. forgejo)"
   backups: "Backups folder on Core's machine (e.g. ~/backups/forgejo)"
   note: "Note"
+
+# Plain words for each field of the entry form (shown on the dashboard).
+help:
+  url:
+    label: Forgejo address
+    say: "The web address you open Forgejo at, like https://git.example.com. Filled in for you if Hisho installed Forgejo."
+  token:
+    label: Read-only token (optional)
+    say: "The name of a saved secret that holds a Forgejo token allowed only to read repositories and organizations (read:repository, read:organization). Leave it empty to see only health, version, containers and backups."
+    get: "{url}/user/settings/applications"
+    get_label: Make a token in Forgejo
+  org:
+    label: Organization (optional)
+    say: "The Forgejo organization whose runners, repositories and mirrors to show, like myorg. Needs the token."
+  watch:
+    label: Repositories to watch (optional)
+    say: "Repositories whose latest CI run to show, written owner/name and separated by commas, like myorg/website, myorg/app. Needs the token."
+  container:
+    label: Docker container (optional)
+    say: "Only when Forgejo runs on the Core machine: the name of its Docker container, usually forgejo. Filled in for you if Hisho installed Forgejo."
+  backups:
+    label: Backups folder (optional)
+    say: "Only when Forgejo runs on the Core machine: the folder its nightly backups go to, like ~/backups/forgejo. Hisho checks they are there, recent and not empty. Filled in for you if Hisho installed Forgejo."
+  note:
+    say: "Anything you want to remember about this server. Shown on its card."
